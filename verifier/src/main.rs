@@ -36,8 +36,8 @@ struct NitroMeasurements {
 }
 
 impl NitroMeasurements {
-    fn from_dsse_envelope(dsse_envelope: DsseEnvelope) -> Result<NitroMeasurements, anyhow::Error> {
-        let decoded = STANDARD.decode(dsse_envelope.payload)?;
+    fn from_dsse_payload(payload: String) -> Result<NitroMeasurements, anyhow::Error> {
+        let decoded = STANDARD.decode(payload)?;
         let decoded_str = String::from_utf8(decoded)?;
 
         let decoded_payload: DecodedPayload = serde_json::from_str(&decoded_str)?;
@@ -91,7 +91,7 @@ fn main() {
     let file = File::open(args.bundle).unwrap();
     let reader = BufReader::new(file);
     let document: DsseDocument = serde_json::from_reader(reader).unwrap();
-    let sig_measurements = NitroMeasurements::from_dsse_envelope(document.dsseEnvelope).unwrap();
+    let sig_measurements = NitroMeasurements::from_dsse_payload(document.dsseEnvelope.payload).unwrap();
 
     let mut ok = true;
 
