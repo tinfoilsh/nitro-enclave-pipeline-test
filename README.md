@@ -5,7 +5,7 @@
 ### 1. Download enclave image
 
 ```bash
-TF_HELPER_VERSION=v0.0.1
+TF_HELPER_VERSION=v0.0.2
 curl -LO "https://github.com/tinfoilanalytics/nitro-enclave-pipeline-test/releases/download/$TF_HELPER_VERSION/tinfoil-helper-enclave-$TF_HELPER_VERSION.eif"
 ```
 
@@ -35,4 +35,12 @@ cosign verify-blob-attestation \
   --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
   --certificate-identity-regexp="^https://github.com/tinfoilanalytics/nitro-enclave-pipeline-test/.github/workflows/release.yml.?" \
   "tinfoil-helper-enclave-$TF_HELPER_VERSION.eif"
+```
+
+### 3. Verify PCR measurement predicate
+
+#### 3.1. Build PCR verifier
+```bash
+cd verifier
+cargo run -- --eif ../tinfoil-helper-enclave-$TF_HELPER_VERSION.eif --bundle ../attestation.jsonl
 ```
