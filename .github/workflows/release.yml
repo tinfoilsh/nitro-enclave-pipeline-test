@@ -59,7 +59,7 @@ jobs:
           RELEASE_NOTES=$(cat << EOF
           Measurements:
           \`\`\`
-          $(cat measurements.txt)
+          $(cat predicate.json)
           \`\`\`
           Log: https://search.sigstore.dev?logIndex=$(jq -r ".verificationMaterial.tlogEntries[0].logIndex" ${{ steps.attest.outputs.bundle-path }})
           EOF
