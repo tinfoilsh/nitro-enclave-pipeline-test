@@ -42,11 +42,16 @@ jobs:
             -e INFO_FILE=tinfoil-helper-enclave-${{ github.ref_name }}-info.json \
             eif-builder:latest
 
+      - name: Create measurements predicate
+        run: jq -r ".Measurements" tinfoil-helper-enclave-${{ github.ref_name }}-info.json > predicate.json
+
       - name: Attest
-        uses: actions/attest-build-provenance@v1
+        uses: actions/attest@v1
         id: attest
         with:
           subject-path: tinfoil-helper-enclave-${{ github.ref_name }}.eif
+          predicate-type: https://tinfoil.sh/predicate/nitro-enclave-measurements/v1
+          predicate-path: predicate.json
 
       - name: Generate release notes
         id: generate-release-notes
@@ -54,9 +59,7 @@ jobs:
           RELEASE_NOTES=$(cat << EOF
           Measurements:
           \`\`\`
-          PCR0 $(jq -r ".Measurements.PCR0" tinfoil-helper-enclave-${{ github.ref_name }}-info.json)
-          PCR1 $(jq -r ".Measurements.PCR1" tinfoil-helper-enclave-${{ github.ref_name }}-info.json)
-          PCR2 $(jq -r ".Measurements.PCR2" tinfoil-helper-enclave-${{ github.ref_name }}-info.json)
+          $(cat measurements.txt)
           \`\`\`
           Log: https://search.sigstore.dev?logIndex=$(jq -r ".verificationMaterial.tlogEntries[0].logIndex" ${{ steps.attest.outputs.bundle-path }})
           EOF
