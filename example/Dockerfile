@@ -1,4 +1,4 @@
-FROM ghcr.io/tinfoilanalytics/nitro-attestation-shim AS shim
+FROM ghcr.io/tinfoilanalytics/nitro-attestation-shim:v0.0.7 AS shim
 FROM nginxdemos/hello
 
 COPY --from=shim /nitro-attestation-shim /nitro-attestation-shim
