@@ -15,7 +15,7 @@ else
   VERSION=$(curl -sL "https://api.github.com/repos/$REPO/tags" | jq -r '.[0].name')
 fi
 
-ENCLAVE_FILE=tinfoil-helper-enclave-$VERSION.eif
+ENCLAVE_FILE=tinfoil-enclave-$VERSION.eif
 
 echo "Fetching enclave version $VERSION..."
 curl -sLO "https://github.com/$REPO/releases/download/$VERSION/$ENCLAVE_FILE"
@@ -24,7 +24,7 @@ SUBJECT_DIGEST="sha256:$(sha256sum "$ENCLAVE_FILE" | cut -d ' ' -f 1)"
 echo "$ENCLAVE_FILE $SUBJECT_DIGEST"
 
 echo "Fetching attestation document..."
-ATT_DOC=tinfoil-helper-enclave-$VERSION-attestation.jsonl
+ATT_DOC=tinfoil-enclave-$VERSION-attestation.jsonl
 curl -sL "https://api.github.com/repos/tinfoilanalytics/nitro-enclave-pipeline-test/attestations/$SUBJECT_DIGEST" | jq -r '.attestations[0].bundle' > "$ATT_DOC"
 
 # The attestation document contains a reference to the transparency log entry in SigStore

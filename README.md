@@ -5,8 +5,8 @@
 ### 1. Download enclave image
 
 ```bash
-TF_HELPER_VERSION=v0.0.2
-curl -LO "https://github.com/tinfoilanalytics/nitro-enclave-pipeline-test/releases/download/$TF_HELPER_VERSION/tinfoil-helper-enclave-$TF_HELPER_VERSION.eif"
+ENCLAVE_VERSION=v0.0.2
+curl -LO "https://github.com/tinfoilanalytics/nitro-enclave-pipeline-test/releases/download/$ENCLAVE_VERSION/tinfoil-enclave-$ENCLAVE_VERSION.eif"
 ```
 
 ### 2. Verify Attestation (chose one method)
@@ -14,7 +14,7 @@ curl -LO "https://github.com/tinfoilanalytics/nitro-enclave-pipeline-test/releas
 #### Option A: Verify in one-line with the [GitHub CLI](https://cli.github.com/)
 
 ```bash
-gh attestation verify --repo tinfoilanalytics/nitro-enclave-pipeline-test tinfoil-helper-enclave-$TF_HELPER_VERSION.eif
+gh attestation verify --repo tinfoilanalytics/nitro-enclave-pipeline-test tinfoil-enclave-$ENCLAVE_VERSION.eif
 ```
 
 #### Option B: Manual Verification
@@ -22,7 +22,7 @@ gh attestation verify --repo tinfoilanalytics/nitro-enclave-pipeline-test tinfoi
 #### 2.1. Download Attestation Document
 
 ```bash
-DIGEST="sha256:$(sha256sum "tinfoil-helper-enclave-$TF_HELPER_VERSION.eif" | cut -d ' ' -f 1)"
+DIGEST="sha256:$(sha256sum "tinfoil-enclave-$ENCLAVE_VERSION.eif" | cut -d ' ' -f 1)"
 curl -sL "https://api.github.com/repos/tinfoilanalytics/nitro-enclave-pipeline-test/attestations/$DIGEST" | jq -r ".attestations[0].bundle" > attestation.jsonl
 ```
 
@@ -34,7 +34,7 @@ cosign verify-blob-attestation \
   --bundle attestation.jsonl \
   --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
   --certificate-identity-regexp="^https://github.com/tinfoilanalytics/nitro-enclave-pipeline-test/.github/workflows/release.yml.?" \
-  "tinfoil-helper-enclave-$TF_HELPER_VERSION.eif"
+  "tinfoil-enclave-$ENCLAVE_VERSION.eif"
 ```
 
 ### 3. Verify PCR measurement predicate
@@ -42,5 +42,5 @@ cosign verify-blob-attestation \
 #### 3.1. Build PCR verifier
 ```bash
 cd verifier
-cargo run -- --eif ../tinfoil-helper-enclave-$TF_HELPER_VERSION.eif --bundle ../attestation.jsonl
+cargo run -- --eif ../tinfoil-enclave-$ENCLAVE_VERSION.eif --bundle ../attestation.jsonl
 ```

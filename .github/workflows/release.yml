@@ -48,18 +48,18 @@ jobs:
             -v /var/run/docker.sock:/var/run/docker.sock \
             -v $(pwd):/output \
             -e DOCKER_IMAGE=nginx-nitro:latest \
-            -e EIF_FILE=tinfoil-helper-enclave-${{ github.ref_name }}.eif \
-            -e INFO_FILE=tinfoil-helper-enclave-${{ github.ref_name }}-info.json \
+            -e EIF_FILE=tinfoil-enclave-${{ github.ref_name }}.eif \
+            -e INFO_FILE=tinfoil-enclave-${{ github.ref_name }}-info.json \
             eif-builder:latest
 
       - name: Create measurements predicate
-        run: jq -r ".Measurements" tinfoil-helper-enclave-${{ github.ref_name }}-info.json > predicate.json
+        run: jq -r ".Measurements" tinfoil-enclave-${{ github.ref_name }}-info.json > predicate.json
 
       - name: Attest
         uses: actions/attest@v1
         id: attest
         with:
-          subject-path: tinfoil-helper-enclave-${{ github.ref_name }}.eif
+          subject-path: tinfoil-enclave-${{ github.ref_name }}.eif
           predicate-type: https://tinfoil.sh/predicate/nitro-enclave-measurements/v1
           predicate-path: predicate.json
 
@@ -82,6 +82,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            tinfoil-helper-enclave-${{ github.ref_name }}.eif
-            tinfoil-helper-enclave-${{ github.ref_name }}-info.json
+            tinfoil-enclave-${{ github.ref_name }}.eif
+            tinfoil-enclave-${{ github.ref_name }}-info.json
           body: ${{ steps.generate-release-notes.outputs.release-notes }}
