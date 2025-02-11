@@ -1,6 +1,6 @@
 #!/bin/bash
 
-REPO=tinfoilanalytics/nitro-enclave-pipeline-test
+REPO=tinfoilsh/nitro-enclave-pipeline-test
 
 if [ ! -f verifier/target/release/verifier ]; then
   echo "Building verifier..."
@@ -25,7 +25,7 @@ echo "$ENCLAVE_FILE $SUBJECT_DIGEST"
 
 echo "Fetching attestation document..."
 ATT_DOC=tinfoil-enclave-$VERSION-attestation.jsonl
-curl -sL "https://api.github.com/repos/tinfoilanalytics/nitro-enclave-pipeline-test/attestations/$SUBJECT_DIGEST" | jq -r '.attestations[0].bundle' > "$ATT_DOC"
+curl -sL "https://api.github.com/repos/tinfoilsh/nitro-enclave-pipeline-test/attestations/$SUBJECT_DIGEST" | jq -r '.attestations[0].bundle' > "$ATT_DOC"
 
 # The attestation document contains a reference to the transparency log entry in SigStore
 echo "Transparency log: https://search.sigstore.dev?logIndex=$(jq -r ".verificationMaterial.tlogEntries[0].logIndex" "$ATT_DOC")"
